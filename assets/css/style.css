@@ -1,0 +1,70 @@
+
+  body {
+    font-family: 'arial', sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  .custom-navbar {
+    background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(148,97,201,1) 38%, rgba(0,1,255,1) 100%);
+    margin-bottom: 5px;
+    z-index:105;
+    text-align: center;
+  }
+
+
+  .custom-navbar a:hover {
+    color: var(--light);
+  }
+
+/* Style the search box inside the navigation bar */
+.search-container {
+  float: left;
+  padding: 6px;
+  border: none;
+  margin-top: 8px;
+  margin-right: 16px;
+  font-size: 17px;
+}
+
+.search-container button {
+  float: none;
+  display: block;
+  text-align: left;
+  width: 100%;
+  margin: 0;
+  padding: 6px;
+}
+
+
+
+/* When the screen is less than 600px wide, stack the header vertically instead of horizontally */
+@media screen and (max-width: 600px) {
+  .custom-navbar a {
+    float: none;
+    display: block;
+    text-align: left;
+    width: 100%;
+    margin: 0;
+    padding: 14px;
+  }
+  .custom-navbar {
+    border: 1px solid #ccc;
+  }
+}
+.card {
+  /* A flex-basis of 200px sets the starting width */
+  /* A flex-grow value of 1 allows the elements to evenly grow to fill the remaining space */
+  flex: wrap;
+  padding: 10px;
+  text-align: left;
+  border-style: solid;
+  border-width: 3px;
+  border-color: black;
+}
+
+.content{
+ display: flex;
+margin-left: 215px;
+padding: 20px;
+}
