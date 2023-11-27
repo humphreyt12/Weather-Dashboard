@@ -1,6 +1,10 @@
-
+*{
+  box-sizing: border-box;
+  
+}
+  
   body {
-    font-family: 'arial', sans-serif;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-size: 16px;
     line-height: 1.5;
   }
@@ -61,10 +65,18 @@
   border-style: solid;
   border-width: 3px;
   border-color: black;
+  
+}
+
+.card-body {
+  color: black;
+  margin-right: 0px;
+  margin-left: 0px;
+
 }
 
 .content{
- display: flex;
+display: flex;
 margin-left: 215px;
 padding: 20px;
 }
