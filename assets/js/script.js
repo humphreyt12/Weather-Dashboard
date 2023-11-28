@@ -1,7 +1,8 @@
 //Declare a variable to store the searched city
-var city = "";
+var city = "Atlanta";
 
 // variable declaration
+var searchFormEl = document.querySelector('#search-form');
 var searchCity = $("#search-city");
 var searchButton = $("#search-button");
 var currentCity = $("#current-city");
@@ -25,24 +26,24 @@ var APIKey = "e8a8374f29bc3187a7b794e86f244acd";
 
 
 // Here we build the URL so we can get a data from server side.
-function currentWeather(city){
+//function currentWeather(city){
 var queryURL = "http://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + APIKey;
-fetch(queryURL)
-
-
-.then(function (response) {
+fetch(queryURL, {
+    method: 'GET', //GET is the default.
+    credentials: 'same-origin', // include, *same-origin, omit
+    redirect: 'follow', // manual, *follow, error
+}).then(function (response) {
     return response.json();
   })
   .then(function (data) {
-    for (var i = 0; i < data.length; i++) {
-      var listItem = document.createElement('li');
-      listItem.textContent = data[i].html_url;
-      repoList.appendChild(listItem);
-    }
-    // parse the response to display the current weather including the City name. the Date and the weather icon. 
-console.log(response);
+    console.log(data)
   });
-}
+
+
+
+    // parse the response to display the current weather including the City name. the Date and the weather icon. 
+//console.log(response);
+
 
 // Display the curent and future weather to the user after grabing the city form the input text box.
 function displayWeather(event){
@@ -68,3 +69,5 @@ function loadlastCity(){
 }
 //Click Handlers
 $("#search-button").on("click",displayWeather);
+
+searchFormEl.addEventListener('submit', handleSearchFormSubmit);
