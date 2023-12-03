@@ -9,6 +9,8 @@ var currentCity = $("#current-city");
 var currentTemperature = $("#temperature");
 var currentHumidty= $("#humidity");
 var currentWind=$("#wind");
+var fiveDayForcast = $(".five-day-forcast")
+var weatherIcon = $("#weather-icon")
 
 var sCity=[];
 
@@ -37,6 +39,11 @@ fetch(queryURL, {
   })
   .then(function (data) {
     console.log(data)
+    // 
+    var image = $("<img>");
+    image.attr("src", `https://openweathermap.org/img/w/${data.weather[0].icon}.png`);
+    weatherIcon.html(image)
+    currentTemperature.text(`Temp: ${data.main.temp}`) // "Temp: " + data.main.temp
   });
 
 
@@ -67,7 +74,58 @@ function loadlastCity(){
     }
 
 }
+
+var arr = [
+    {
+        temp: 44,
+        wind: "34mph",
+        humidty: 45
+    },
+    {
+        temp: 42,
+        wind: "24mph",
+        humidty: 55
+    },
+    {
+        temp: 66,
+        wind: "50mph",
+        humidty: 15
+    },
+    {
+        temp: 25,
+        wind: "77mph",
+        humidty: 95
+    },
+    {
+        temp: 34,
+        wind: "22mph",
+        humidty: 11
+    },
+]
+
+
+// for (let i = 0; i < 40; i+=8) { // i+=8 is going to get the data of the next day in the array of 40 objects in the five days weather response
+for (let i = 0; i < arr.length; i++) { 
+    var card = `
+    <div class="card">
+      <div class="card-body">
+        <p id="fDate1"></p>
+        <p id="fImg1"></p>
+        <p>Temp:<span id="fTemp1">${arr[i].temp}</span></p>
+        <p>Wind:<span id="fWind1">${arr[i].wind}</span></p>
+        <p>Humidity:<span id="fHumidity1">${arr[i].humidty}</span></p>
+        <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+      </div>
+    </div>
+    `
+    var newDiv = $("<div>");
+    newDiv.html(card);
+    fiveDayForcast.append(newDiv);
+}
 //Click Handlers
 $("#search-button").on("click",displayWeather);
 
-searchFormEl.addEventListener('submit', handleSearchFormSubmit);
+//searchFormEl.addEventListener('submit', handleSearchFormSubmit);
+
+
+
