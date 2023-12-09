@@ -13,13 +13,14 @@
     background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(148,97,201,1) 38%, rgba(0,1,255,1) 100%);
     margin-bottom: 5px;
     z-index:105;
-    text-align: center;
+   
   }
 
 
   .custom-navbar a:hover {
     color: var(--light);
   }
+
 
 /* Style the search box inside the navigation bar */
 .search-container {
@@ -40,6 +41,9 @@
   padding: 6px;
 }
 
+.card {
+margin-top: -10px;
+}
 
 
 /* When the screen is less than 600px wide, stack the header vertically instead of horizontally */
