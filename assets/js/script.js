@@ -1,8 +1,8 @@
-//Declare a variable to store the searched city
-var city = "Tampa";
-const cityInput = document.querySelector(".city-input");
+// //Declare a variable to store the searched city
+var cityName = '';
+//var city = "Tampa";
 //var futureWeather = document.querySelector("#future-weather");
-
+var currentWeather = document.querySelector("#current-weather");
 // variable declaration
 var searchFormEl = document.querySelector('#search-form');
 var searchCity = $("#search-city");
@@ -16,22 +16,26 @@ var weatherIcon = $("#weather-icon")
 
 var searchButton = document.querySelector(".search-btn");
 
-
+const cityInput = document.querySelector(".city-input");
 var APIKey = "e8a8374f29bc3187a7b794e86f244acd"; //The API key from OpenWeatherMap 
 
 // Here we build the URL so we can get a data from server side.
-//function currentWeather(city){
-const queryURL = "http://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + APIKey;
-fetch(queryURL, {
-    method: 'GET', //GET is the default.
-    credentials: 'same-origin', // include, *same-origin, omit
-    redirect: 'follow', // manual, *follow, error
-}).then(function (response) {
+function currentWeather () {
+  //var cityName = cityInputvalue.trim(); // Get user entered city and remove extra spaces
+const WeatherMapAPIURL = `https://api.openweathermap.org/data/2.5/weather&q=` + cityName + "&appid=" + APIKey;
+//Get entered city from API response
+fetch(WeatherMapAPIURL,
+{
+  method: "GET", //GET is the default.
+  credentials: "same-origin", // include, *same-origin, omit
+  redirect: "follow", // manual, *follow, error
+}
+).then(function (response) {
     return response.json();
   })
   .then(function (data) {
     console.log(data)
-    // 
+
     var image = $("<img>");
     image.attr("src", `https://openweathermap.org/img/w/${data.weather[0].icon}.png`); // Weather Icon Image
     weatherIcon.html(image)
@@ -40,9 +44,7 @@ fetch(queryURL, {
     currentWind.text(`Wind: ${data.wind.deg}`) // "Wind: " + data.wind.deg
     currentHumidty.text(`Humidity: ${data.main.humidity}`) // "Humidity: " + data.main.humidity
   });
-
-
-
+}
 // parse the response to display the current weather including the City name. the Date and the weather icon. 
 
 // Display the curent and future weather to the user after grabing the city form the input text box.
@@ -55,24 +57,24 @@ fetch(queryURL, {
 // } 
 
 
-const futureWeather = () => {
-    const cityName = cityInput.value.trim(); // Get user entered city and remove extra spaces
-    localStorage.setItem("cityName", cityName);  // Storing City Input in Local Storage
-    if(!cityName) return;  //Return if cityName is empty
-    const FiveDayAPIURL = "api.openweathermap.org/data/2.5/forecast?q=${cityName}lat={lat}&lon={lon}&appid={e8a8374f29bc3187a7b794e86f244acd}"
+// const futureWeather = () => {
+//     const cityName = cityInput.value.trim(); // Get user entered city and remove extra spaces
+//     localStorage.setItem("cityName", cityName);  // Storing City Input in Local Storage
+//     if(!cityName) return;  //Return if cityName is empty
+//     const FiveDayAPIURL = `api.openweathermap.org/data/2.5/forecast?q=${cityName}lat={lat}&lon={lon}&appid={e8a8374f29bc3187a7b794e86f244acd}`;
 
-//Get entered city from the API response
-fetch(FiveDayAPIURL, {
-    method: 'GET', //GET is the default.
-    credentials: 'same-origin', // include, *same-origin, omit
-    redirect: 'follow', // manual, *follow, error
-}).then(function (response) {
-    return response.json();
-  })
-  .then(function (data) {
-    console.log(data)
-  });
-}
+// //Get entered city from the API response
+// fetch(FiveDayAPIURL, {
+//     method: 'GET', //GET is the default.
+//     credentials: 'same-origin', // include, *same-origin, omit
+//     redirect: 'follow', // manual, *follow, error
+// }).then(function (response) {
+//     return response.json();
+//   })
+//   .then(function (data) {
+//     console.log(data)
+//   });
+// }
   var arr = [
     {
         temp: 44,
@@ -101,7 +103,7 @@ fetch(FiveDayAPIURL, {
     },
 ]
 
-// for (let i = 0; i < 40; i+=8) { // i+=8 is going to get the data of the next day in the array of 40 objects in the five days weather response
+//for (let i = 0; i < 40; i+=8) { // i+=8 is going to get the data of the next day in the array of 40 objects in the five days weather response
 for (let i = 0; i < arr.length; i++) { 
     var card = `
     <div class="card">
@@ -122,8 +124,8 @@ for (let i = 0; i < arr.length; i++) {
 
 
 //Click Handlers
-//searchButton.addEventListener("click",displayWeather);
-$("#search-button").on("click",futureWeather);
+searchButton.addEventListener("click", currentWeather);
+//$("#search-button").on("click",futureWeather);
 
 
 
