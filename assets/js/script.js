@@ -22,8 +22,12 @@ function currentWeather (e) {
 
 const WeatherMapAPIURL = `https://api.openweathermap.org/data/2.5/weather?q=` + cityName + "&appid=" + APIKey;
 //Get entered city from API response
-fetch(WeatherMapAPIURL,
-
+fetch(WeatherMapAPIURL, {
+    method: 'POST',
+    body: JSON.stringify({
+    foo: "bar"
+    })
+  }
 ).then(function (response) {
   console.log("RES: ", response)
     return response.json();
@@ -59,7 +63,12 @@ function futureWeather(lat, lon) {
   const FiveDayAPIURL = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${APIKey}`;
 
   //Get entered city from the API response
-  fetch(FiveDayAPIURL
+  fetch(FiveDayAPIURL, {
+      method: 'POST',
+      body: JSON.stringify({
+      foo: "bar"
+      })
+    }
 
   ).then(function (response) {
       return response.json();
@@ -72,17 +81,19 @@ function futureWeather(lat, lon) {
         var card = `
           <div class="card">
             <div class="card-body">
-              <p id="fDate1"></p>
+              <p id="fDate1">${data.list[i].dt_txt}</p>
               <p id="fImg1"></p>
               <p>Temp:<span id="fTemp1">${data.list[i].main.temp}</span></p>
               <p>Wind:<span id="fWind1">${data.list[i].wind.deg}</span></p>
-              <p>Humidity:<span id="fHumidity1">${data.list[i].main.humidty}</span></p>
+              <p>Humidity:<span id="fHumidity1">${data.list[i].main.humidity}</span></p>
             </div>
           </div>
           `
+   
     var newDiv = $("<div>");
     newDiv.html(card);
     fiveDayForcast.append(newDiv);
+    
     }
  });
 }
