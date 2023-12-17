@@ -6,7 +6,7 @@ var currentWeatherEl = document.querySelector("#current-weather");
 // variable declaration
 var searchFormEl = document.querySelector('#search-form');
 var searchCity = document.querySelector("#search-city");
-var fiveDayForcast = document.querySelector(".five-day-forcast")
+var fiveDayForecast = document.querySelector(".five-day-forecast")
 // var weatherIcon = $("#weather-icon")
 
 var searchButton = document.querySelector(".search-btn");
@@ -46,16 +46,7 @@ fetch(WeatherMapAPIURL, {
     $("#humidity").text(`Humidity: ${data.main.humidity}`) // "Humidity: " + data.main.humidity
   });
 }
-// parse the response to display the current weather including the City name. the Date and the weather icon. 
 
-// Display the curent and future weather to the user after grabing the city form the input text box.
-// function displayWeather(event){
-//     event.preventDefault();
-//     if(searchCity.val().trim()!==""){
-//         city=searchCity.val().trim();
-//         currentWeather(city);
-//     }
-// } 
 
 
 function futureWeather(lat, lon) {
@@ -71,18 +62,19 @@ function futureWeather(lat, lon) {
     }
 
   ).then(function (response) {
-      return response.json();
+      return response.json();   
   })
   .then(function (data) {
   
     // i+=8 is going to get the data of the next day in the array of 40 objects in the five days weather response
     for (let i = 0; i < data.list.length; i+=8) {
+   
       console.log("FIVE DAY: ", data.list[i])
         var card = `
           <div class="card">
             <div class="card-body">
               <p id="fDate1">${data.list[i].dt_txt}</p>
-              <p id="fImg1"></p>
+              <p id="fImg1">${data.list[i].weather[0].icon}</p>   
               <p>Temp:<span id="fTemp1">${data.list[i].main.temp}</span></p>
               <p>Wind:<span id="fWind1">${data.list[i].wind.deg}</span></p>
               <p>Humidity:<span id="fHumidity1">${data.list[i].main.humidity}</span></p>
@@ -92,7 +84,7 @@ function futureWeather(lat, lon) {
    
     var newDiv = $("<div>");
     newDiv.html(card);
-    fiveDayForcast.append(newDiv);
+    fiveDayForecast.append(newDiv[0]);
     
     }
  });
