@@ -17,6 +17,10 @@ var APIKey = "e8a8374f29bc3187a7b794e86f244acd"; //The API key from OpenWeatherM
 // Here we build the URL so we can get a data from server side.
 function currentWeather (e) {
   e.preventDefault()
+
+// TODO: When the user hits submit, their search is saved to local storage
+// TODO: Once that item is saved to local storage, a new button is immediately added to the page
+
   var cityName = cityInputvalue.value; // Get user entered city and remove extra spaces
   localStorage.setItem("cityName", cityName);  // Storing City Input in Local Storage
 
@@ -36,18 +40,16 @@ fetch(WeatherMapAPIURL, {
     console.log(data)
     var lat = data.coord.lat;
     var lon = data.coord.lon;
+    const date = dayjs(data.dt*1000).format('M/D/YYYY')
     futureWeather(lat, lon)
     var image = $("<img>");
     image.attr("src", `https://openweathermap.org/img/w/${data.weather[0].icon}.png`); // Weather Icon Image
-    $("#weather-icon").html(image)
-    $("#current-city").text(`${data.name}`) + dayjs().format('MM/DD/YYYY'); // Displays the City Name and JS Format
-    $("#temperature").text(`Temp: ${data.main.temp}`) // "Temp: " + data.main.temp
-    $("#wind").text(`Wind: ${data.wind.deg}`) // "Wind: " + data.wind.deg
-    $("#humidity").text(`Humidity: ${data.main.humidity}`) // "Humidity: " + data.main.humidity
+    $("#current-city").text(`${data.name}`) + $("#date").text(`${date}`) + $("#weather-icon").html(image)// Displays the City Name and Date in Day.JS Format
+    $("#temperature").text(`Temp: ${data.main.temp} ℉`) // "Temp: " + data.main.temp
+    $("#wind").text(`Wind: ${data.wind.deg} °`) // "Wind: " + data.wind.deg
+    $("#humidity").text(`Humidity: ${data.main.humidity} %`) // "Humidity: " + data.main.humidity
   });
 }
-
-
 
 function futureWeather(lat, lon) {
 
@@ -70,14 +72,16 @@ function futureWeather(lat, lon) {
     for (let i = 0; i < data.list.length; i+=8) {
    
       console.log("FIVE DAY: ", data.list[i])
+      const date = dayjs(data.list[i].dt_txt).format('M/D/YYYY')
+
         var card = `
           <div class="card">
             <div class="card-body">
-              <p id="fDate1">${data.list[i].dt_txt}</p>
-              <p id="fImg1">${data.list[i].weather[0].icon}</p>   
-              <p>Temp:<span id="fTemp1">${data.list[i].main.temp}</span></p>
-              <p>Wind:<span id="fWind1">${data.list[i].wind.deg}</span></p>
-              <p>Humidity:<span id="fHumidity1">${data.list[i].main.humidity}</span></p>
+              <p id="fDate1">${date}</p>
+              <img src="https://openweathermap.org/img/w/${data.list[i].weather[0].icon}.png"></img>  
+              <p>Temp:<span id="fTemp1">${data.list[i].main.temp} ℉</span></p>
+              <p>Wind:<span id="fWind1">${data.list[i].wind.deg} °</span></p>
+              <p>Humidity:<span id="fHumidity1">${data.list[i].main.humidity} %</span></p>
             </div>
           </div>
           `
@@ -93,7 +97,12 @@ function futureWeather(lat, lon) {
 //Click Handlers
 searchButton.addEventListener("click", currentWeather);
 
+// TODO: On page load. Grab all items in local storage, and display buttons on screen.
 
+function init () {
+  // get local storage
+  // render buttons
+}
 
-
-
+init()
+  
