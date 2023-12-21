@@ -1,6 +1,6 @@
 // //Declare a variable to store the searched city
-var cityName = '';
-
+var cityName = [];
+var citySearch = [];
 
 var currentWeatherEl = document.querySelector("#current-weather");
 // variable declaration
@@ -10,19 +10,43 @@ var fiveDayForecast = document.querySelector(".five-day-forecast")
 // var weatherIcon = $("#weather-icon")
 
 var searchButton = document.querySelector(".search-btn");
-
-var cityInputvalue = document.querySelector(".city-input");
+var cityInput = document.querySelector(".city-input");
 var APIKey = "e8a8374f29bc3187a7b794e86f244acd"; //The API key from OpenWeatherMap 
+
 
 // Here we build the URL so we can get a data from server side.
 function currentWeather (e) {
   e.preventDefault()
 
-// TODO: When the user hits submit, their search is saved to local storage
-// TODO: Once that item is saved to local storage, a new button is immediately added to the page
 
-  var cityName = cityInputvalue.value; // Get user entered city and remove extra spaces
-  localStorage.setItem("cityName", cityName);  // Storing City Input in Local Storage
+
+// cityNameCountSpan.textContent = citySearch.length;
+
+  // Render a new li for each searched city
+  // for (var i = 0; i < citySearch.length; i++) {
+  //   var citySearch = citySearch[i];
+
+  //   var li = document.createElement("li");
+  //   li.textContent = citySearch;
+
+  //   var button = document.createElement("button");// TODO: Once that item is saved to local storage, a new button is immediately added to the page
+  //   button.textContent = cityName;
+
+  //   li.appendChild(button);
+  //   cityNameList.appendChild(li);
+  // }
+
+  //  citySearch.push(cityNameText);
+  //   cityInput.value = "";
+
+  //   storeCitySearch();
+  //   renderCItySearch()
+// TODO: When the user hits submit, their search is saved to local storage
+localStorage.setItem("citySearch", JSON.stringify(citySearch));
+
+  var cityName = cityInput.value.trim(); // Get user entered city and remove extra spaces
+  localStorage.setItem("cityName", cityName);  // Storing City Name in Local Storage
+
 
 const WeatherMapAPIURL = `https://api.openweathermap.org/data/2.5/weather?q=` + cityName + "&appid=" + APIKey;
 //Get entered city from API response
@@ -98,11 +122,17 @@ function futureWeather(lat, lon) {
 searchButton.addEventListener("click", currentWeather);
 
 // TODO: On page load. Grab all items in local storage, and display buttons on screen.
-
 function init () {
-  // get local storage
-  // render buttons
-}
+  var storedCitySearch = JSON.parse(localStorage.getItem("citySearch"));// get local storage
 
+  // If city were retrieved from localStorage, update the citySearch array to it
+  if (storedCitySearch !== null) {
+    citySearch = storedCitySearch;
+  }
+  // render buttons
+
+}
+  // storeCitySearch();
+  // renderCityName();
 init()
   
