@@ -87,7 +87,7 @@ function futureWeather(lat, lon) {
   .then(function (data) {
   
     // i+=8 is going to get the data of the next day in the array of 40 objects in the five days weather response
-    for (let i = 0; i < data.list.length; i++) {
+    for (let i = 0; i < data.list.length; i+=8) {
    
       console.log("FIVE DAY: ", data.list[i])
       const date = dayjs(data.list[i].dt_txt).format('M/D/YYYY')
@@ -119,13 +119,13 @@ function clearHistory(event){
 
 //Click Handlers
 searchButton.addEventListener("click", currentWeather);
-$("#clear-history").on("click",clearHistory);
+
 
   // TODO: Once that item is saved to local storage, a new button is immediately added to the page
   function rendercityName() {
   cityList.innerHTML = "";
  
-  for (var i = 0; i < cityName.length; i++) {
+  for (var i = 0; i < cityName.length; i+=8) {
     var city = cityName[i];
 
     var li = document.createElement("li");
@@ -137,6 +137,7 @@ $("#clear-history").on("click",clearHistory);
 
     li.appendChild(button);
     cityList.appendChild(li);
+      currentWeather (e);
   } 
 }
 // TODO: On page load. Grab all items in local storage, and display buttons on screen.
@@ -153,6 +154,7 @@ function init () {
     button.textContent = citySearch[city];
     searchContainer.appendChild(button);
   }
+  currentWeather (e);
 }
 
 
@@ -174,6 +176,15 @@ cityList.addEventListener("click", function(event) {
     rendercityName();
   }
 });
+
+function clearHistory() {
+  window.localStorage.removeItem('citySearch');
+  window.location.reload();
+}
+//Click Handlers for Search History
+$(document).on("click",rendercityName);
+$(window).on("load",init);
+document.getElementById('clear-history').onclick = clearHistory;
 
 init()
   
