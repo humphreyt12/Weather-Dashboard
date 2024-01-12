@@ -137,7 +137,7 @@ searchButton.addEventListener("click", currentWeather);
 
     li.appendChild(button);
     cityList.appendChild(li);
-      currentWeather (e);
+ 
   } 
 }
 // TODO: On page load. Grab all items in local storage, and display buttons on screen.
@@ -154,7 +154,7 @@ function init () {
     button.textContent = citySearch[city];
     searchContainer.appendChild(button);
   }
-  currentWeather (e);
+
 }
 
 
