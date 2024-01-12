@@ -165,6 +165,7 @@ searchForm .addEventListener("submit", function(event) {
 
 
 });
+var cityList = document.getElementById('city-list');
 cityList.addEventListener("click", function(event) {
   var element = event.target;
 
@@ -182,8 +183,8 @@ function clearHistory() {
   window.location.reload();
 }
 //Click Handlers for Search History
-$(document).on("click",rendercityName);
-$(window).on("load",init);
+
+
 document.getElementById('clear-history').onclick = clearHistory;
 
 init()
