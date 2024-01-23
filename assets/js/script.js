@@ -2,7 +2,6 @@
 var cityName = [];
 var citySearch = [];
 
-
 // variable declaration
 var searchForm = document.querySelector('#search-form');
 var searchCity = document.querySelector("#search-city");
@@ -25,11 +24,24 @@ function find(c){
 }
 var APIKey = "e8a8374f29bc3187a7b794e86f244acd"; //The API key from OpenWeatherMap 
 
+//The purpose of this function is taking the city and sending it to local storage 
+function historySave(element) {
+  
+  // var searchHistory = JSON.parse(localStorage.getItem("citySearch")) || [];
+// TODO: When the user hits submit, their search is saved to local storage
+//  var cityName = cityInput.value.trim(); // Get user entered city and remove extra spaces
 
+//  if (searchHistory.includes(cityName) === false) {
+  citySearch.push(element);
+ localStorage.setItem("citySearch", JSON.stringify(citySearch));
+//  }
+  
+ localStorage.setItem("cityName", cityName);  // Storing City Name in Local Storage
+}
 // Here we build the URL so we can get a data from server side.
-function currentWeather (e) {
-  e.preventDefault()
-
+function currentWeather(element) {
+  // e.preventDefault()
+console.log(element);
   var searchHistory = JSON.parse(localStorage.getItem("citySearch")) || [];
 // TODO: When the user hits submit, their search is saved to local storage
  var cityName = cityInput.value.trim(); // Get user entered city and remove extra spaces
@@ -42,6 +54,8 @@ function currentWeather (e) {
  localStorage.setItem("cityName", cityName);  // Storing City Name in Local Storage
 
 const WeatherMapAPIURL = `https://api.openweathermap.org/data/2.5/weather?q=` + cityName + "&appid=" + APIKey;
+var cityName = element;
+console.log(cityName);
 //Get entered city from API response
 fetch(WeatherMapAPIURL, {
     method: 'POST',
@@ -122,7 +136,8 @@ searchButton.addEventListener("click", currentWeather);
 
 
   // TODO: Once that item is saved to local storage, a new button is immediately added to the page
-  function rendercityName() {
+  function rendercityName(element) {
+  cityName.push(element);
   cityList.innerHTML = "";
  
   for (var i = 0; i < cityName.length; i+=8) {
@@ -157,8 +172,8 @@ function init () {
 
 }
 
-
-searchForm .addEventListener("submit", function(event) {
+//Search history
+searchForm.addEventListener("submit", function(event) {
   event.preventDefault();
 
   var cityText = cityInput.value.trim();
@@ -166,25 +181,33 @@ searchForm .addEventListener("submit", function(event) {
 
 });
 var cityList = document.getElementById('city-list');
-cityList.addEventListener("click", function(event) {
-  var element = event.target;
-
+// cityList.addEventListener("click", function(event) {
+  cityList.addEventListener("submit", locationsearch)
+  function locationsearch(event) {
+    if (!cityInput.value){
+      return;
+    }
+    event.preventDefault();
+    var element = cityInput.value.trim();
+  // }
+ 
   // Checks if element is a button
-  if (element.matches("button") === true) {
-    // Get its data-index value and remove the todo element from the list
-    var index = element.parentElement.getAttribute("data-index");
-    cityName.splice(index, 1);
-    rendercityName();
+  if (element.matches(".clear-btn") === true) {
+    console.log("this is a history button");
+    // Get its data-index value and remove the  element from the list
+    // var index = element.parentElement.getAttribute("data-index");
+    // cityName.splice(index, 1);
   }
-});
-
+  // rendercityName(element);
+  historySave(element)
+  currentWeather(element);
+};
+  
 function clearHistory() {
   window.localStorage.removeItem('citySearch');
   window.location.reload();
 }
 //Click Handlers for Search History
-
-
 document.getElementById('clear-history').onclick = clearHistory;
 
 init()
