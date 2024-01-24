@@ -1,215 +1,153 @@
-// //Declare a variable to store the searched city
-var cityName = [];
+// Declare a variable to store the searched city
+var sCity = [];
 var citySearch = [];
-
-// variable declaration
+var cityName = "";
+// Variable declaration
 var searchForm = document.querySelector('#search-form');
-var searchCity = document.querySelector("#search-city");
 var currentWeatherEl = document.querySelector("#current-weather");
 var fiveDayForecast = document.querySelector(".five-day-forecast");
-var searchButton = document.querySelector(".search-btn");
 var clearButton = $("#clear-history");
 var cityList = document.querySelector("#city-list");
 var cityInput = document.querySelector(".city-input");
 var searchContainer = document.querySelector(".search-container");
 
-// searches the city to see if it exists in the entries from the storage
-function find(c){
-  for (var i=0; i<citySearch.length; i++){
-      if(c.toUpperCase()=== citySearch[i]){
-          return -1;
-      }
+function displayWeather(event) {
+  event.preventDefault();
+  var cityNameInput = document.getElementById('search-input').value.trim();
+  if (cityNameInput !== "") {
+    cityName = cityNameInput;
+    currentWeather(cityName);
   }
-  return 1;
 }
-var APIKey = "e8a8374f29bc3187a7b794e86f244acd"; //The API key from OpenWeatherMap 
 
-//The purpose of this function is taking the city and sending it to local storage 
-function historySave(element) {
-  
-  // var searchHistory = JSON.parse(localStorage.getItem("citySearch")) || [];
-// TODO: When the user hits submit, their search is saved to local storage
-//  var cityName = cityInput.value.trim(); // Get user entered city and remove extra spaces
+// Function to display current and future weather
+function currentWeather(cityName) {
+  console.log("City Name Before Trim:", cityName);
 
-//  if (searchHistory.includes(cityName) === false) {
-  citySearch.push(element);
- localStorage.setItem("citySearch", JSON.stringify(citySearch));
-//  }
-  
- localStorage.setItem("cityName", cityName);  // Storing City Name in Local Storage
-}
-// Here we build the URL so we can get a data from server side.
-function currentWeather(element) {
-  // e.preventDefault()
-console.log(element);
-  var searchHistory = JSON.parse(localStorage.getItem("citySearch")) || [];
-// TODO: When the user hits submit, their search is saved to local storage
- var cityName = cityInput.value.trim(); // Get user entered city and remove extra spaces
+  // Check if cityName is a string and not empty before making the API request
+  if (typeof cityName !== 'string' || cityName.trim() === '') {
+      console.error("Invalid city name. Please enter a valid city name.");
+      // Display an error message to the user or take appropriate action
+      return;
+  }
 
- if (searchHistory.includes(cityName) === false) {
-  citySearch.push(cityName);
- localStorage.setItem("citySearch", JSON.stringify(citySearch));
- }
-  
- localStorage.setItem("cityName", cityName);  // Storing City Name in Local Storage
+  // Here we build the URL so we can get data from the server side.
+  const WeatherMapAPIURL = `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=e8a8374f29bc3187a7b794e86f244acd`;
 
-const WeatherMapAPIURL = `https://api.openweathermap.org/data/2.5/weather?q=` + cityName + "&appid=" + APIKey;
-var cityName = element;
-console.log(cityName);
-//Get entered city from API response
-fetch(WeatherMapAPIURL, {
-    method: 'POST',
-    body: JSON.stringify({
-    foo: "bar"
+  console.log("API Request URL:", WeatherMapAPIURL); // Add this line for debugging
+
+
+  // Get entered city from API response
+  fetch(WeatherMapAPIURL)
+    .then(function (response) {
+      return response.json();
     })
+    .then(function (data) {
+      if (data.cod === '400') {
+        console.error("Error in API response:", data.message);
+        return;
+      }
+
+      var lat = data.coord.lat;
+      var lon = data.coord.lon;
+      const date = dayjs(data.dt * 1000).format('M/D/YYYY');
+      futureWeather(lat, lon);
+      var image = $("<img>");
+      image.attr("src", `https://openweathermap.org/img/w/${data.weather[0].icon}.png`);
+      $("#current-city").text(`${data.name}`) + $("#date").text(`${date}`) + $("#weather-icon").html(image);
+      $("#temperature").text(`Temp: ${((data.main.temp - 273.15) * 1.80 + 32).toFixed(2)} ℉`);
+      $("#wind").text(`Wind: ${(data.wind.speed * 2.237).toFixed(1)} MPH`);
+      $("#humidity").text(`Humidity: ${data.main.humidity} %`);
+    })
+    .catch(function (error) {
+      console.error("Error in fetch:", error);
+    });
   }
-).then(function (response) {
-  console.log("RES: ", response)
-    return response.json();
-  })
-  .then(function (data) {
-    console.log(data)
-    var lat = data.coord.lat;
-    var lon = data.coord.lon;
-    const date = dayjs(data.dt*1000).format('M/D/YYYY')
-    futureWeather(lat, lon)
-    var image = $("<img>");
-    image.attr("src", `https://openweathermap.org/img/w/${data.weather[0].icon}.png`); // Weather Icon Image
-    $("#current-city").text(`${data.name}`) + $("#date").text(`${date}`) + $("#weather-icon").html(image)// Displays the City Name and Date in Day.JS Format
-    $("#temperature").text(`Temp: ${((data.main.temp - 273.15) * 1.80 + 32).toFixed(2)} ℉`) // "Temp: " + data.main.temp
-    $("#wind").text(`Wind: ${(data.wind.speed*2.237).toFixed(1)} MPH`) // "Wind: " + data.wind.speed
-    $("#humidity").text(`Humidity: ${data.main.humidity} %`) // "Humidity: " + data.main.humidity
-  });
-}
 
-//Get future weather data from the five day API response
+// TODO: When the user hits submit, their search is saved to local storage
+var cityName = document.getElementById('search-input').value.trim();
+localStorage.setItem("cityName", JSON.stringify(cityName));  // Storing City Name in Local Storage
+
+// Function to get future weather data from the five day API response
 function futureWeather(lat, lon) {
+  const FiveDayAPIURL = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=e8a8374f29bc3187a7b794e86f244acd`;
 
-  const FiveDayAPIURL = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${APIKey}`;
-
-  //Get entered city from the API response
-  fetch(FiveDayAPIURL, {
-      method: 'POST',
-      body: JSON.stringify({
-      foo: "bar"
-      })
-    }
-
-  ).then(function (response) {
-      return response.json();   
-  })
-  .then(function (data) {
-  
-    // i+=8 is going to get the data of the next day in the array of 40 objects in the five days weather response
-    for (let i = 0; i < data.list.length; i+=8) {
-   
-      console.log("FIVE DAY: ", data.list[i])
-      const date = dayjs(data.list[i].dt_txt).format('M/D/YYYY')
-        // Creating the five day weather cards
+  // Get entered city from the API response
+  fetch(FiveDayAPIURL)
+    .then(function (response) {
+      return response.json();
+    })
+    .then(function (data) {
+      for (let i = 0; i < data.list.length; i += 8) {
+        const date = dayjs(data.list[i].dt_txt).format('M/D/YYYY');
         var card = `
           <div class="card">
             <div class="card-body">
               <p id="fDate1">${date}</p>
               <img src="https://openweathermap.org/img/w/${data.list[i].weather[0].icon}.png"></img>  
               <p>Temp:<span id="fTemp1">${((data.list[i].main.temp - 273.15) * 1.80 + 32).toFixed(2)} ℉</span></p>
-              <p>Wind:<span id="fWind1">${(data.list[i].wind.speed*2.237).toFixed(1)} MPH</span></p>
+              <p>Wind:<span id="fWind1">${(data.list[i].wind.speed * 2.237).toFixed(1)} MPH</span></p>
               <p>Humidity:<span id="fHumidity1">${data.list[i].main.humidity} %</span></p>
             </div>
           </div>
-          `
-    var newDiv = $("<div>");
-    newDiv.html(card);
-    fiveDayForecast.append(newDiv[0]);
-    }
- });
+          `;
+        var newDiv = $("<div>");
+        newDiv.html(card);
+        fiveDayForecast.append(newDiv[0]);
+      }
+    });
 }
 
-//Clear the search history from the page
-function clearHistory(event){
-  citySearch = [];
-  localStorage.removeItem("cityname");
-
+// Function to dynamically add the passed city as a button in the search history
+function addToList(c) {
+  const buttonEl = $("<button>" + c.toUpperCase() + "</button>");
+  $(buttonEl).attr("class", "city-button");
+  $(buttonEl).attr("data-value", c.toUpperCase());
+  $(".city-list").append(buttonEl);
 }
 
-//Click Handlers
-searchButton.addEventListener("click", currentWeather);
-
-
-  // TODO: Once that item is saved to local storage, a new button is immediately added to the page
-  function rendercityName(element) {
-  cityName.push(element);
-  cityList.innerHTML = "";
- 
-  for (var i = 0; i < cityName.length; i+=8) {
-    var city = cityName[i];
-
-    var li = document.createElement("li");
-    li.textContent = city;
-    li.setAttribute("data-index", i);
-
-    var button = document.createElement("button");
-    button.textContent = "city";
-
-    li.appendChild(button);
-    cityList.appendChild(li);
- 
-  } 
-}
-// TODO: On page load. Grab all items in local storage, and display buttons on screen.
-function init () {
-  var storedCitySearch = JSON.parse(localStorage.getItem("citySearch"));// get local storage
-   // If city were retrieved from localStorage, update the citySearch array to it
-   if (storedCitySearch !== null) {
-    citySearch = storedCitySearch;
+// Function to display the past search again when the city button is clicked in search history
+function invokePastSearch(event) {
+  const buttonEl = event.target;
+  if (event.target.matches(".city-button")) {
+    const cityName = buttonEl.textContent.trim();
+    currentWeather(cityName);
   }
+}
+
+// Function to render the last city
+function loadlastCity() {
+  $("ul").empty();
+  const storedData = localStorage.getItem("cityName", cityName);
+
+   
+      for (let i = 0; i < sCity.length; i++) {
+        addToList(sCity[i]);
+        cityName = sCity[i];
+      }
+      currentWeather(cityName);
+    } 
   
-  // render buttons
-  for (let city in citySearch) {
-    var button = document.createElement("button");
-    button.textContent = citySearch[city];
-    searchContainer.appendChild(button);
-  }
 
-}
-
-//Search history
-searchForm.addEventListener("submit", function(event) {
+// Function to clear the search history from the page
+function clearHistory(event) {
   event.preventDefault();
-
-  var cityText = cityInput.value.trim();
-
-
-});
-var cityList = document.getElementById('city-list');
-// cityList.addEventListener("click", function(event) {
-  cityList.addEventListener("submit", locationsearch)
-  function locationsearch(event) {
-    if (!cityInput.value){
-      return;
-    }
-    event.preventDefault();
-    var element = cityInput.value.trim();
-  // }
- 
-  // Checks if element is a button
-  if (element.matches(".clear-btn") === true) {
-    console.log("this is a history button");
-    // Get its data-index value and remove the  element from the list
-    // var index = element.parentElement.getAttribute("data-index");
-    // cityName.splice(index, 1);
-  }
-  // rendercityName(element);
-  historySave(element)
-  currentWeather(element);
-};
-  
-function clearHistory() {
-  window.localStorage.removeItem('citySearch');
-  window.location.reload();
+  sCity = [];
+  localStorage.removeItem("cityName");
+  document.location.reload();
 }
-//Click Handlers for Search History
-document.getElementById('clear-history').onclick = clearHistory;
 
-init()
+// Click Handlers
+$(".search-btn").on("click", displayWeather);
+
+$(document).on("click", invokePastSearch);
+$(window).on("load", function () {
+  loadlastCity();
+  $("#error-message").text(""); // Clear error message on page load
+});
+document.getElementById('clear-history').onclick = clearHistory; // Click Handler for Clear History
+
+
+
   
 
