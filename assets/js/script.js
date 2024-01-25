@@ -5,30 +5,32 @@ var sCity = [];
 // Variable declaration
 var searchForm = document.querySelector('#search-form');
 var currentWeatherEl = document.querySelector("#current-weather");
-var fiveDayForecast = document.querySelector(".five-day-forecast");
+var fiveDayForecast = $(".five-day-forecast");
 var clearButton = $("#clear-history");
 var cityList = document.querySelector("#city-list");
 var cityInput = document.querySelector(".city-input");
 var searchContainer = document.querySelector(".search-container");
 var APIKey = "e8a8374f29bc3187a7b794e86f244acd";
 
-  // Display the current and future weather to the user after grabbing the city from the input text box.
-  function displayWeather(event) {
-    event.preventDefault();
-    const cityName = $(cityInput).val().trim();
-
-    if (cityName !== "") {
-      currentWeather(cityName);
-      addToList(cityName); // Add the city to the list when displaying weather
-      saveToLocalStorage(cityName); // Save the city to local storage
-    }
+// Function to display current and future weather
+function displayWeather(event) {
+  event.preventDefault();
+  var cityInputValue = cityInput.value.trim();
+  if (cityInputValue !== "") {
+    cityName = cityInputValue;
+    currentWeather(cityName);
   }
+}
 
 // Function to display current and future weather
 function currentWeather(cityName) {
+  console.log(cityName);
   // Here we build the URL so we can get data from the server side.
   const WeatherMapAPIURL = `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${APIKey}`;
 
+ // Clear existing forecast before appending new content
+ fiveDayForecast.html('');
+ 
   // Get entered city from API response
   fetch(WeatherMapAPIURL) 
     .then((response) => response.json())
@@ -48,9 +50,6 @@ function currentWeather(cityName) {
       console.error("Error in fetch:", error);
     });
   }
-
-// TODO: When the user hits submit, their search is saved to local storage
-$(".search-btn").on("click", displayWeather);
 
 // Function to get future weather data from the five day API response
 function futureWeather(lat, lon) {
@@ -82,28 +81,6 @@ function futureWeather(lat, lon) {
       }
     });
 }
-
-//Function to save city to local storage
-  function saveToLocalStorage(cityName) {
-    let storedData = localStorage.getItem("cityName");
-    if (storedData === null) {
-      sCity = [];
-    } else {
-      sCity = JSON.parse(storedData);
-    }
-
-    sCity.push(cityName);
-    localStorage.setItem("cityName", JSON.stringify(sCity));
-  }
-
-  // Function to dynamically add the passed city as a button in the search history
-  function addToList(c) {
-    const buttonEl = $("<button>" + c.toUpperCase() + "</button>");
-    $(buttonEl).attr("class", "city-button");
-    $(buttonEl).attr("data-value", c.toUpperCase());
-    $(".city-list").append(buttonEl);
-  }
-
 // Function to display the past search again when the city button is clicked in search history
 function invokePastSearch(event) {
   const buttonEl = event.target;
@@ -113,18 +90,43 @@ function invokePastSearch(event) {
   }
 }
 
+// Function to save city to local storage
+function saveToLocalStorage(cityName) {
+  let storedData = localStorage.getItem("cityName");
+  if (storedData === null) {
+    sCity = [];
+  } else {
+    sCity = JSON.parse(storedData);
+  }
+
+  sCity.push(cityName);
+  localStorage.setItem("cityName", JSON.stringify(sCity)); // Corrected line
+}
+
+// Function to dynamically add the passed city as a button in the search history
+function addToList(c) {
+  const buttonEl = $("<button>" + c.toUpperCase() + "</button>");
+  $(buttonEl).attr("class", "city-button");
+  $(buttonEl).attr("data-value", c.toUpperCase());
+  cityList.append(buttonEl); // Corrected line
+}
+
 // Function to render the last city
 function loadlastCity() {
   $("ul").empty();
-  const storedData = localStorage.getItem("cityName", sCity);
+  const storedData = localStorage.getItem("cityName");
+  
   if (storedData !== null && storedData.trim() !== "") {
     const sCity = JSON.parse(storedData);
-    for (let i = 0; i < sCity.length; i+=8) {
-      addToList(sCity[i]);
-    }
+
+    sCity.forEach(city => {
+      addToList(city);
+    });
+
+    // Display the weather for the last city in the array
+    currentWeather(sCity[sCity.length - 1]);
   }
 }
-  
 
 // Function to clear the search history from the page
 function clearHistory(event) {
@@ -136,12 +138,12 @@ function clearHistory(event) {
 
 // Click Handlers
 $(".search-btn").on("click", displayWeather);
-$(document).on("click", invokePastSearch);
+$(document).on("click", ".city-button", invokePastSearch);
+$(document).on("click", "#clear-history", clearHistory);
 $(window).on("load", function () {
   loadlastCity();
   $("#error-message").text(""); // Clear error message on page load
   });
-document.getElementById('clear-history').onclick = clearHistory; // Click Handler for Clear History
 });
 
   
