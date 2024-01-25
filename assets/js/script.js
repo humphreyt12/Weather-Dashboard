@@ -1,7 +1,7 @@
+$(document).ready(function() {
 // Declare a variable to store the searched city
 var sCity = [];
-var citySearch = [];
-var cityName = "";
+
 // Variable declaration
 var searchForm = document.querySelector('#search-form');
 var currentWeatherEl = document.querySelector("#current-weather");
@@ -10,44 +10,29 @@ var clearButton = $("#clear-history");
 var cityList = document.querySelector("#city-list");
 var cityInput = document.querySelector(".city-input");
 var searchContainer = document.querySelector(".search-container");
+var APIKey = "e8a8374f29bc3187a7b794e86f244acd";
 
-function displayWeather(event) {
-  event.preventDefault();
-  var cityNameInput = document.getElementById('search-input').value.trim();
-  if (cityNameInput !== "") {
-    cityName = cityNameInput;
-    currentWeather(cityName);
+  // Display the current and future weather to the user after grabbing the city from the input text box.
+  function displayWeather(event) {
+    event.preventDefault();
+    const cityName = $(cityInput).val().trim();
+
+    if (cityName !== "") {
+      currentWeather(cityName);
+      addToList(cityName); // Add the city to the list when displaying weather
+      saveToLocalStorage(cityName); // Save the city to local storage
+    }
   }
-}
 
 // Function to display current and future weather
 function currentWeather(cityName) {
-  console.log("City Name Before Trim:", cityName);
-
-  // Check if cityName is a string and not empty before making the API request
-  if (typeof cityName !== 'string' || cityName.trim() === '') {
-      console.error("Invalid city name. Please enter a valid city name.");
-      // Display an error message to the user or take appropriate action
-      return;
-  }
-
   // Here we build the URL so we can get data from the server side.
-  const WeatherMapAPIURL = `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=e8a8374f29bc3187a7b794e86f244acd`;
-
-  console.log("API Request URL:", WeatherMapAPIURL); // Add this line for debugging
-
+  const WeatherMapAPIURL = `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${APIKey}`;
 
   // Get entered city from API response
-  fetch(WeatherMapAPIURL)
-    .then(function (response) {
-      return response.json();
-    })
-    .then(function (data) {
-      if (data.cod === '400') {
-        console.error("Error in API response:", data.message);
-        return;
-      }
-
+  fetch(WeatherMapAPIURL) 
+    .then((response) => response.json())
+    .then((data) => {
       var lat = data.coord.lat;
       var lon = data.coord.lon;
       const date = dayjs(data.dt * 1000).format('M/D/YYYY');
@@ -65,8 +50,7 @@ function currentWeather(cityName) {
   }
 
 // TODO: When the user hits submit, their search is saved to local storage
-var cityName = document.getElementById('search-input').value.trim();
-localStorage.setItem("cityName", JSON.stringify(cityName));  // Storing City Name in Local Storage
+$(".search-btn").on("click", displayWeather);
 
 // Function to get future weather data from the five day API response
 function futureWeather(lat, lon) {
@@ -75,6 +59,7 @@ function futureWeather(lat, lon) {
   // Get entered city from the API response
   fetch(FiveDayAPIURL)
     .then(function (response) {
+      console.log(response);
       return response.json();
     })
     .then(function (data) {
@@ -98,13 +83,26 @@ function futureWeather(lat, lon) {
     });
 }
 
-// Function to dynamically add the passed city as a button in the search history
-function addToList(c) {
-  const buttonEl = $("<button>" + c.toUpperCase() + "</button>");
-  $(buttonEl).attr("class", "city-button");
-  $(buttonEl).attr("data-value", c.toUpperCase());
-  $(".city-list").append(buttonEl);
-}
+//Function to save city to local storage
+  function saveToLocalStorage(cityName) {
+    let storedData = localStorage.getItem("cityName");
+    if (storedData === null) {
+      sCity = [];
+    } else {
+      sCity = JSON.parse(storedData);
+    }
+
+    sCity.push(cityName);
+    localStorage.setItem("cityName", JSON.stringify(sCity));
+  }
+
+  // Function to dynamically add the passed city as a button in the search history
+  function addToList(c) {
+    const buttonEl = $("<button>" + c.toUpperCase() + "</button>");
+    $(buttonEl).attr("class", "city-button");
+    $(buttonEl).attr("data-value", c.toUpperCase());
+    $(".city-list").append(buttonEl);
+  }
 
 // Function to display the past search again when the city button is clicked in search history
 function invokePastSearch(event) {
@@ -118,15 +116,14 @@ function invokePastSearch(event) {
 // Function to render the last city
 function loadlastCity() {
   $("ul").empty();
-  const storedData = localStorage.getItem("cityName", cityName);
-
-   
-      for (let i = 0; i < sCity.length; i++) {
-        addToList(sCity[i]);
-        cityName = sCity[i];
-      }
-      currentWeather(cityName);
-    } 
+  const storedData = localStorage.getItem("cityName", sCity);
+  if (storedData !== null && storedData.trim() !== "") {
+    const sCity = JSON.parse(storedData);
+    for (let i = 0; i < sCity.length; i+=8) {
+      addToList(sCity[i]);
+    }
+  }
+}
   
 
 // Function to clear the search history from the page
@@ -139,15 +136,13 @@ function clearHistory(event) {
 
 // Click Handlers
 $(".search-btn").on("click", displayWeather);
-
 $(document).on("click", invokePastSearch);
 $(window).on("load", function () {
   loadlastCity();
   $("#error-message").text(""); // Clear error message on page load
-});
+  });
 document.getElementById('clear-history').onclick = clearHistory; // Click Handler for Clear History
-
-
+});
 
   
 
