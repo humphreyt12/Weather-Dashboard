@@ -1,4 +1,4 @@
-$(document).ready(function() {
+
 // Declare a variable to store the searched city
 var sCity = [];
 
@@ -24,8 +24,9 @@ function displayWeather(event) {
 
 // Function to display current and future weather
 function currentWeather(cityName) {
+  saveToLocalStorage(cityName);
   console.log(cityName);
-  addToList(cityName); //creates a button every time user seraches for a city
+  loadCities();
   // Here we build the URL so we can get data from the server side.
   const WeatherMapAPIURL = `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${APIKey}`;
 
@@ -99,7 +100,11 @@ function saveToLocalStorage(cityName) {
   } else {
     sCity = JSON.parse(storedData);
   }
-
+  for (let i = 0; i<sCity.length; i++){
+    if (cityName === sCity[i]){
+      return;
+    }
+  }
   sCity.push(cityName);
   localStorage.setItem("cityName", JSON.stringify(sCity)); // Corrected line
 }
@@ -112,9 +117,9 @@ function addToList(c) {
   cityList.append(buttonEl); // Corrected line
 }
 
-// Function to render the last city
-function loadlastCity() {
-  $("ul").empty();
+// Function to render the cities
+function loadCities() {
+  $(cityList).empty();
   const storedData = localStorage.getItem("cityName");
   
   if (storedData !== null && storedData.trim() !== "") {
@@ -123,10 +128,9 @@ function loadlastCity() {
     sCity.forEach(city => {
       addToList(city);
     });
-
-    // Display the weather for the last city in the array
-    currentWeather(sCity[sCity.length - 1]);
+    
   }
+
 }
 
 // Function to clear the search history from the page
@@ -141,11 +145,8 @@ function clearHistory(event) {
 $(".search-btn").on("click", displayWeather);
 $(document).on("click", ".city-button", invokePastSearch);
 $(document).on("click", "#clear-history", clearHistory);
-$(window).on("load", function () {
-  loadlastCity();
-  $("#error-message").text(""); // Clear error message on page load
-  });
-});
+
+loadCities();
 
   
 
