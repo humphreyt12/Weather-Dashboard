@@ -25,7 +25,7 @@ function displayWeather(event) {
 // Function to display current and future weather
 function currentWeather(cityName) {
   console.log(cityName);
-  addToList(cityName);
+  addToList(cityName); //creates a button every time user seraches for a city
   // Here we build the URL so we can get data from the server side.
   const WeatherMapAPIURL = `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${APIKey}`;
 
