@@ -7,7 +7,7 @@ var searchForm = document.querySelector('#search-form');
 var currentWeatherEl = document.querySelector("#current-weather");
 var fiveDayForecast = $(".five-day-forecast");
 var clearButton = $("#clear-history");
-var cityList = document.querySelector("#city-list");
+var cityList = $(".city-list");
 var cityInput = document.querySelector(".city-input");
 var searchContainer = document.querySelector(".search-container");
 var APIKey = "e8a8374f29bc3187a7b794e86f244acd";
@@ -25,6 +25,7 @@ function displayWeather(event) {
 // Function to display current and future weather
 function currentWeather(cityName) {
   console.log(cityName);
+  addToList(cityName);
   // Here we build the URL so we can get data from the server side.
   const WeatherMapAPIURL = `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${APIKey}`;
 
