@@ -125,13 +125,10 @@ function loadCities() {
   
   if (storedData !== null && storedData.trim() !== "") {
     const sCity = JSON.parse(storedData);
-
     sCity.forEach(city => {
       addToList(city);
     });
-    
   }
-
 }
 
 // Function to clear the search history from the page
@@ -147,6 +144,7 @@ $(".search-btn").on("click", displayWeather);
 $(document).on("click", ".city-button", invokePastSearch);
 $(document).on("click", "#clear-history", clearHistory);
 
+//Calling the loadCities function
 loadCities();
 
   

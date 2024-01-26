@@ -8,15 +8,13 @@
     font-size: 16px;
     line-height: 1.5;
   }
-
+  /* Style the navabar */
   .custom-navbar {
     background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(148,97,201,1) 38%, rgba(0,1,255,1) 100%);
     margin-bottom: 5px;
     z-index:105;
-   
+    justify-content: center;
   }
-
-
   .custom-navbar a:hover {
     color: var(--light);
   }
@@ -31,7 +29,7 @@
   margin-right: 16px;
   font-size: 17px;
 }
-
+/* Style the search box button */
 .search-container button {
   float: none;
   display: block;
@@ -41,11 +39,11 @@
   padding: 6px;
   background: lightblue;
 }
-
+/* Style the current weather card */
 .card {
 margin-top: 15px; 
 background: lightblue;
-color: white;
+color: black;
 }
 
 
@@ -63,6 +61,7 @@ color: white;
     border: 1px solid #ccc;
   }
 }
+/* Style the futher weather cards  */
 .card { 
   /* A flex-basis of 200px sets the starting width */
   /* A flex-grow value of 1 allows the elements to evenly grow to fill the remaining space */
