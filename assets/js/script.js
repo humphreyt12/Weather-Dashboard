@@ -111,9 +111,10 @@ function saveToLocalStorage(cityName) {
 
 // Function to dynamically add the passed city as a button in the search history
 function addToList(c) {
-  const buttonEl = $("<button>" + c.toUpperCase() + "</button>");
+  const buttonEl = $("<button>" + c + "</button>");
   $(buttonEl).attr("class", "city-button");
-  $(buttonEl).attr("data-value", c.toUpperCase());
+  $(buttonEl).attr("data-value", c);
+  $(buttonEl).css({"background-color": 'rgba(148,97,201,1)'});
   cityList.append(buttonEl); // Corrected line
 }
 
